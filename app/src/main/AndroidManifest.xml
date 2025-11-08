@@ -11,6 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.InventoryWidget">
+
+        <!-- ACTIVIDAD PRINCIPAL -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -18,10 +20,23 @@
             android:theme="@style/Theme.InventoryWidget">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- 👇 AÑADE ESTA PARTE PARA EL WIDGET -->
+        <receiver android:name=".widget.InventoryWidgetProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/inventory_widget_info" />
+        </receiver>
+        <!-- 👆 FIN DEL BLOQUE DEL WIDGET -->
+
     </application>
 
 </manifest>

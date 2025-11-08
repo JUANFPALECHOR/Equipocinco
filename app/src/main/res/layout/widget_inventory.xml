@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#CC000000"
+    android:padding="12dp"
+    android:gravity="center">
+
+    <!-- Parte superior -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <!-- Logo de la app -->
+        <ImageView
+            android:id="@+id/logo"
+            android:src="@mipmap/ic_launcher"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginEnd="8dp" />
+
+        <!-- Texto "¿Cuánto tengo de inventario?" -->
+        <TextView
+            android:id="@+id/tv_pregunta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="¿Cuánto tengo de inventario?"
+            android:textColor="@android:color/white"
+            android:textSize="13sp"
+            android:layout_gravity="center_vertical" />
+
+
+    </LinearLayout>
+
+
+    <!-- Texto principal -->
+    <TextView
+        android:id="@+id/tv_inventory"
+        android:text="Inventory"
+        android:textColor="#E7522E"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:layout_marginTop="6dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        />
+
+    <!-- Monto -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="8dp">
+
+        <TextView
+            android:id="@+id/tv_saldo"
+            android:text="$****"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            />
+
+        <ImageView
+            android:id="@+id/iv_ojo"
+            android:src="@drawable/ic_eye_closed"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="8dp" />
+    </LinearLayout>
+
+    <!-- Enlace a la app -->
+    <TextView
+        android:id="@+id/tv_gestionar"
+        android:text="Gestionar inventario"
+        android:textColor="#FA8523"
+        android:textSize="14sp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        />
+</LinearLayout>
