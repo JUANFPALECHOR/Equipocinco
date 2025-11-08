@@ -10,11 +10,9 @@ import android.widget.RemoteViews
 import com.univalle.inventorywidget.MainActivity
 import com.univalle.inventorywidget.R
 import java.text.NumberFormat
-import java.util.Locale
+import java.util.*
 
 class InventoryWidgetProvider : AppWidgetProvider() {
-
-    private var mostrarSaldo = false
 
     override fun onUpdate(context: Context, manager: AppWidgetManager, appWidgetIds: IntArray) {
         for (id in appWidgetIds) {
@@ -23,9 +21,12 @@ class InventoryWidgetProvider : AppWidgetProvider() {
     }
 
     private fun actualizarWidget(context: Context, manager: AppWidgetManager, id: Int) {
+        val prefs = context.getSharedPreferences("inventory_prefs", Context.MODE_PRIVATE)
+        val mostrarSaldo = prefs.getBoolean("mostrarSaldo", false)
+
         val views = RemoteViews(context.packageName, R.layout.widget_inventory)
 
-        // Mostrar o esconder el saldo
+        // Accion de Mostra u ocultar saldo
         val saldoTexto = if (mostrarSaldo) {
             "$" + NumberFormat.getNumberInstance(Locale("es", "CO")).format(3326.0) + ",00"
         } else {
@@ -39,18 +40,16 @@ class InventoryWidgetProvider : AppWidgetProvider() {
         )
 
         // Acción del ojo
-        val toggleIntent = Intent(context, InventoryWidgetProvider::class.java)
-        toggleIntent.action = "com.univalle.inventorywidget.TOGGLE_SALDO"
+        val toggleIntent = Intent(context, InventoryWidgetProvider::class.java).apply {
+            action = "com.univalle.inventorywidget.TOGGLE_SALDO"
+        }
 
         val togglePendingIntent = PendingIntent.getBroadcast(
-            context,
-            0,
-            toggleIntent,
-            PendingIntent.FLAG_IMMUTABLE
+            context, 0, toggleIntent, PendingIntent.FLAG_IMMUTABLE
         )
         views.setOnClickPendingIntent(R.id.iv_ojo, togglePendingIntent)
 
-        // Acción de "Gestionar inventario"
+        // Acción de "Gestionar inventario" para solo la hu1
         val intent = Intent(context, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             context, 0, intent, PendingIntent.FLAG_IMMUTABLE
@@ -63,13 +62,13 @@ class InventoryWidgetProvider : AppWidgetProvider() {
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
         if (intent.action == "com.univalle.inventorywidget.TOGGLE_SALDO") {
-            mostrarSaldo = !mostrarSaldo
+            val prefs = context.getSharedPreferences("inventory_prefs", Context.MODE_PRIVATE)
+            val actual = prefs.getBoolean("mostrarSaldo", false)
+            prefs.edit().putBoolean("mostrarSaldo", !actual).apply()
+
             val manager = AppWidgetManager.getInstance(context)
             val ids = manager.getAppWidgetIds(
-                ComponentName(
-                    context,
-                    InventoryWidgetProvider::class.java
-                )
+                ComponentName(context, InventoryWidgetProvider::class.java)
             )
             onUpdate(context, manager, ids)
         }
