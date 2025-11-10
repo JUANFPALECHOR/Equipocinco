@@ -5,7 +5,7 @@
   "op": 60,
   "w": 512,
   "h": 512,
-  "nm": "fingerprint scan simple",
+  "nm": "fingerprint_unlock",
   "ddd": 0,
   "assets": [],
   "layers": [
