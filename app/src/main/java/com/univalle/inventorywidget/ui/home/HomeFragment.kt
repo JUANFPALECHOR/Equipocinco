@@ -29,6 +29,9 @@ class HomeFragment : Fragment() {
         recyclerView = vista.findViewById(R.id.recyclerProductos)
         toolbar = vista.findViewById(R.id.toolbarInventario)
 
+        toolbar.title = "Inventario"
+        toolbar.setTitleTextColor(resources.getColor(android.R.color.white))
+
 
         toolbar.inflateMenu(R.menu.menu_toolbar)
         toolbar.setOnMenuItemClickListener { item ->

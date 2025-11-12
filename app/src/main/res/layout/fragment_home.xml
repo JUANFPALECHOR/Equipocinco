@@ -16,10 +16,10 @@
         android:background="#424242"
         android:title="Inventario"
         android:titleTextColor="@android:color/white"
-        app:menu="@menu/menu_toolbar"
-        app:layout_scrollFlags="scroll|enterAlways" />
+        app:titleCentered="false" />
 
-    <!-- RecyclerView para listar productos -->
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerProductos"
         android:layout_width="match_parent"
@@ -36,6 +36,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:contentDescription="Agregar producto"
-        android:src="@android:drawable/ic_input_add" />
+        android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="@color/naranja_principal"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
