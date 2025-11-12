@@ -42,6 +42,20 @@ class ProductAdapter(private val listaProductos: List<Product>) :
         holder.txtPrecio.setTextColor(
             holder.itemView.context.getColor(R.color.naranja_principal)
         )
+
+        // Al tocar el producto, ir al detalle (HU 5.0)
+        holder.itemView.setOnClickListener {
+            val fragment = com.univalle.inventorywidget.ui.detail.ProductDetailFragment()
+            val bundle = android.os.Bundle()
+            bundle.putString("codigoProducto", producto.codigo)
+            fragment.arguments = bundle
+
+            val activity = it.context as androidx.appcompat.app.AppCompatActivity
+            activity.supportFragmentManager.beginTransaction()
+                .replace(R.id.contenedorFragments, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
     }
  
     override fun getItemCount(): Int = listaProductos.size
