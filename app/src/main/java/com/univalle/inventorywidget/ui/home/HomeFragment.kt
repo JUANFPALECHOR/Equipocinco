@@ -12,6 +12,7 @@ import com.univalle.inventorywidget.R
 import com.univalle.inventorywidget.ui.adapters.ProductAdapter
 import com.univalle.inventorywidget.ui.login.LoginActivity
 import com.google.android.material.appbar.MaterialToolbar
+import com.univalle.inventorywidget.ui.addproduct.AddProductFragment
 
 class HomeFragment : Fragment() {
 
@@ -45,11 +46,24 @@ class HomeFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
 
-        viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        viewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
+        ).get(HomeViewModel::class.java)
 
-
+        // Observar los productos en vivo
         viewModel.productos.observe(viewLifecycleOwner) { lista ->
             recyclerView.adapter = ProductAdapter(lista)
+        }
+
+        // 🔘 Navegar a la pantalla de Agregar Producto
+        val btnAgregar = vista.findViewById<com.google.android.material.floatingactionbutton.FloatingActionButton>(R.id.btnAgregar)
+        btnAgregar.setOnClickListener {
+            val fragment = AddProductFragment()
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.contenedorFragments, fragment)
+                .addToBackStack(null)
+                .commit()
         }
 
         return vista
