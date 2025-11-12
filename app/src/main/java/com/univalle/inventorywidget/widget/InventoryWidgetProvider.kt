@@ -26,12 +26,25 @@ class InventoryWidgetProvider : AppWidgetProvider() {
 
         val views = RemoteViews(context.packageName, R.layout.widget_inventory)
 
-        // Accion de Mostra u ocultar saldo
+        // Obtener productos desde Room (sin LiveData)
+        val repository = com.univalle.inventorywidget.data.ProductRepository.getInstance(context)
+        val productos = repository.obtenerProductosDirecto()
+
+        // Calcular el saldo total
+        val total = productos.sumOf { it.precio * it.cantidad }
+
+        // Formatear con separadores y dos decimales
+        val formato = NumberFormat.getNumberInstance(Locale("es", "CO"))
+        formato.minimumFractionDigits = 2
+        formato.maximumFractionDigits = 2
+
         val saldoTexto = if (mostrarSaldo) {
-            "$" + NumberFormat.getNumberInstance(Locale("es", "CO")).format(3326.0) + ",00"
+            "$" + formato.format(total)
         } else {
             "$****"
         }
+
+
 
         views.setTextViewText(R.id.tv_saldo, saldoTexto)
         views.setImageViewResource(
