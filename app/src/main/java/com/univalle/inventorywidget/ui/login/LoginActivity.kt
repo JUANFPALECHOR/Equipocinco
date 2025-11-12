@@ -22,6 +22,19 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        // 🔒 Verificador de la sesion
+        val prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE)
+        val isLoggedIn = prefs.getBoolean("isLoggedIn", false)
+
+        if (isLoggedIn) {
+            // Si ya hay sesión, ir directo al Home sin pedir huella
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+            return
+        }
+
+        setContentView(R.layout.activity_login)
 
         executor = ContextCompat.getMainExecutor(this)
 
@@ -33,8 +46,8 @@ class LoginActivity : AppCompatActivity() {
                     Toast.makeText(applicationContext, "Autenticación exitosa ✅", Toast.LENGTH_SHORT).show()
 
                     // Guardar la sesión activa
-                    val prefs = getSharedPreferences("inventory_prefs", MODE_PRIVATE)
-                    prefs.edit().putBoolean("sesionActiva", true).apply()
+                    val prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE)
+                    prefs.edit().putBoolean("isLoggedIn", true).apply()
 
 
                     val intent = Intent(this@LoginActivity, MainActivity::class.java)
