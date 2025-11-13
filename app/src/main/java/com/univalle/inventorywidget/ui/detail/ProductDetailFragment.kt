@@ -19,6 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import android.widget.Toast
+import com.univalle.inventorywidget.ui.editproduct.EditProductFragment
 
 class ProductDetailFragment : Fragment() {
 
@@ -87,7 +88,22 @@ class ProductDetailFragment : Fragment() {
         }
 
         fabEditar.setOnClickListener {
-            Toast.makeText(requireContext(), "Ir a editar (HU6)", Toast.LENGTH_SHORT).show()
+            product?.let { producto ->
+                val bundle = Bundle().apply {
+                    putString("codigo", producto.codigo)
+                    putString("nombre", producto.nombre)
+                    putDouble("precio", producto.precio)
+                    putInt("cantidad", producto.cantidad)
+                }
+
+                val fragment = EditProductFragment()
+                fragment.arguments = bundle
+
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.contenedorFragments, fragment)
+                    .addToBackStack(null)
+                    .commit()
+            }
         }
 
         return vista
