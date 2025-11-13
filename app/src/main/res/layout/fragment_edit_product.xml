@@ -24,7 +24,8 @@
             android:src="@drawable/ic_arrow_back_white"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="Volver"
-            android:tint="@android:color/white" />
+            app:tint="@android:color/white"
+            />
 
         <TextView
             android:layout_width="wrap_content"
@@ -125,7 +126,7 @@
                 android:layout_marginBottom="32dp">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="¡@+id/etCantidadEdit"
+                    android:id="@+id/etCantidadEdit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@android:color/white"
