@@ -7,10 +7,11 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
-import com.univalle.inventorywidget.MainActivity
 import com.univalle.inventorywidget.R
 import java.text.NumberFormat
 import java.util.*
+import kotlinx.coroutines.runBlocking
+
 
 class InventoryWidgetProvider : AppWidgetProvider() {
 
@@ -28,7 +29,8 @@ class InventoryWidgetProvider : AppWidgetProvider() {
 
         // Obtener productos desde Room (sin LiveData)
         val repository = com.univalle.inventorywidget.data.ProductRepository.getInstance(context)
-        val productos = repository.obtenerProductosDirecto()
+        val productos = runBlocking { repository.obtenerProductosDirecto() }
+
 
         // Calcular el saldo total
         val total = productos.sumOf { it.precio * it.cantidad }

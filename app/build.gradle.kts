@@ -64,9 +64,10 @@ dependencies {
     implementation("androidx.coordinatorlayout:coordinatorlayout:1.2.0")
     implementation("com.google.android.material:material:1.11.0")
 
-    implementation("androidx.room:room-runtime:2.5.2")
-    kapt("androidx.room:room-compiler:2.5.2")
-    implementation("androidx.room:room-ktx:2.5.2")
+    implementation("androidx.room:room-runtime:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation("androidx.fragment:fragment-ktx:1.6.2")
