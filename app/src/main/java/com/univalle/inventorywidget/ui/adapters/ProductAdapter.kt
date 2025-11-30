@@ -7,6 +7,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.univalle.inventorywidget.R
 import com.univalle.inventorywidget.data.Product
+import androidx.navigation.findNavController
+import androidx.core.os.bundleOf
+
 
 
 class ProductAdapter(private val listaProductos: List<Product>) :
@@ -45,17 +48,10 @@ class ProductAdapter(private val listaProductos: List<Product>) :
 
         // Al tocar el producto, ir al detalle (HU 5.0)
         holder.itemView.setOnClickListener {
-            val fragment = com.univalle.inventorywidget.ui.detail.ProductDetailFragment()
-            val bundle = android.os.Bundle()
-            bundle.putString("codigoProducto", producto.codigo)
-            fragment.arguments = bundle
-
-            val activity = it.context as androidx.appcompat.app.AppCompatActivity
-            activity.supportFragmentManager.beginTransaction()
-                .replace(R.id.contenedorFragments, fragment)
-                .addToBackStack(null)
-                .commit()
+            val bundle = bundleOf("codigoProducto" to producto.codigo)
+            it.findNavController().navigate(R.id.action_home_to_detail, bundle)
         }
+
     }
  
     override fun getItemCount(): Int = listaProductos.size

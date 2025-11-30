@@ -18,7 +18,8 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textfield.TextInputEditText
 import com.univalle.inventorywidget.R
 import com.univalle.inventorywidget.data.Product
-import com.univalle.inventorywidget.ui.home.HomeFragment
+import androidx.navigation.fragment.findNavController
+
 
 
 class AddProductFragment : Fragment() {
@@ -55,8 +56,9 @@ class AddProductFragment : Fragment() {
 
         // --- BOTÓN VOLVER ---
         toolbar.setNavigationOnClickListener {
-            irAHome()
+            findNavController().navigateUp()
         }
+
 
         // --- WATCHER PARA ACTIVAR BOTÓN ---
         val watcher = object : TextWatcher {
@@ -138,10 +140,7 @@ class AddProductFragment : Fragment() {
     }
 
     private fun irAHome() {
-        val fragment = HomeFragment()
-        requireActivity().supportFragmentManager.beginTransaction()
-            .replace(R.id.contenedorFragments, fragment)
-            .addToBackStack(null)
-            .commit()
+        findNavController().navigateUp()
     }
+
 }

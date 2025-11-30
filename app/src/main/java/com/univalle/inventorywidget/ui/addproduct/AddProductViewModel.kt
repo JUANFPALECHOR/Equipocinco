@@ -8,6 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.univalle.inventorywidget.data.Product
 import com.univalle.inventorywidget.data.ProductRepository
 import kotlinx.coroutines.launch
+import com.univalle.inventorywidget.widget.WidgetUpdateHelper
+
 
 class AddProductViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -24,6 +26,8 @@ class AddProductViewModel(application: Application) : AndroidViewModel(applicati
                 val exito = repository.insert(product)
                 if (exito) {
                     _insertResult.value = InsertResult.Success
+                    // Actualizar widget después de insertar
+                    WidgetUpdateHelper.updateWidget(getApplication())
                 } else {
                     _insertResult.value = InsertResult.DuplicateCode
                 }
@@ -32,6 +36,7 @@ class AddProductViewModel(application: Application) : AndroidViewModel(applicati
             }
         }
     }
+
 
     // Clase sellada para manejar resultados
     sealed class InsertResult {

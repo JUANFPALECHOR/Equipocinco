@@ -8,6 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.univalle.inventorywidget.data.Product
 import com.univalle.inventorywidget.data.ProductRepository
 import kotlinx.coroutines.launch
+import com.univalle.inventorywidget.widget.WidgetUpdateHelper
+
 
 class ProductDetailViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -31,9 +33,12 @@ class ProductDetailViewModel(application: Application) : AndroidViewModel(applic
             try {
                 repository.delete(product)
                 _deleteResult.value = true
+                // Actualizar widget después de eliminar
+                WidgetUpdateHelper.updateWidget(getApplication())
             } catch (e: Exception) {
                 _deleteResult.value = false
             }
         }
     }
+
 }

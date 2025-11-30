@@ -15,6 +15,8 @@ import com.google.android.material.textfield.TextInputEditText
 import com.univalle.inventorywidget.R
 import com.univalle.inventorywidget.data.Product
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+
 
 
 /**
@@ -119,7 +121,7 @@ class EditProductFragment : Fragment() {
             when (result) {
                 is EditProductViewModel.UpdateResult.Success -> {
                     Toast.makeText(requireContext(), "Producto actualizado", Toast.LENGTH_SHORT).show()
-                    requireActivity().onBackPressedDispatcher.onBackPressed()
+                    findNavController().navigateUp()
                 }
                 is EditProductViewModel.UpdateResult.Error -> {
                     Toast.makeText(requireContext(), "Error: ${result.message}", Toast.LENGTH_SHORT).show()
@@ -129,9 +131,11 @@ class EditProductFragment : Fragment() {
 
 
 
+
         btnBack.setOnClickListener {
-            requireActivity().onBackPressedDispatcher.onBackPressed()
+            findNavController().navigateUp()
         }
+
 
         return view
     }

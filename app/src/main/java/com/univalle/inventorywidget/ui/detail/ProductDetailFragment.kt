@@ -12,11 +12,14 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.univalle.inventorywidget.R
 import com.univalle.inventorywidget.data.Product
-import com.univalle.inventorywidget.ui.home.HomeFragment
+
 import android.widget.Toast
-import com.univalle.inventorywidget.ui.editproduct.EditProductFragment
+
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.core.os.bundleOf
+
 
 
 class ProductDetailFragment : Fragment() {
@@ -69,11 +72,9 @@ class ProductDetailFragment : Fragment() {
 
 
         toolbar.setNavigationOnClickListener {
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.contenedorFragments, HomeFragment())
-                .addToBackStack(null)
-                .commit()
+            findNavController().navigateUp()
         }
+
 
         btnEliminar.setOnClickListener {
             AlertDialog.Builder(requireContext())
@@ -92,33 +93,26 @@ class ProductDetailFragment : Fragment() {
         viewModel.deleteResult.observe(viewLifecycleOwner) { success ->
             if (success) {
                 Toast.makeText(requireContext(), "Producto eliminado", Toast.LENGTH_SHORT).show()
-                requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.contenedorFragments, HomeFragment())
-                    .commit()
+                findNavController().navigateUp()
             } else {
                 Toast.makeText(requireContext(), "Error al eliminar", Toast.LENGTH_SHORT).show()
             }
         }
 
 
+
         fabEditar.setOnClickListener {
             product?.let { producto ->
-                val bundle = Bundle().apply {
-                    putString("codigo", producto.codigo)
-                    putString("nombre", producto.nombre)
-                    putDouble("precio", producto.precio)
-                    putInt("cantidad", producto.cantidad)
-                }
-
-                val fragment = EditProductFragment()
-                fragment.arguments = bundle
-
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.contenedorFragments, fragment)
-                    .addToBackStack(null)
-                    .commit()
+                val bundle = bundleOf(
+                    "codigo" to producto.codigo,
+                    "nombre" to producto.nombre,
+                    "precio" to producto.precio.toFloat(),
+                    "cantidad" to producto.cantidad
+                )
+                findNavController().navigate(R.id.action_detail_to_edit, bundle)
             }
         }
+
 
         return vista
     }

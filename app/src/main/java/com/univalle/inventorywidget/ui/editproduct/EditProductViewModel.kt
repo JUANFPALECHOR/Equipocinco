@@ -8,6 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.univalle.inventorywidget.data.Product
 import com.univalle.inventorywidget.data.ProductRepository
 import kotlinx.coroutines.launch
+import com.univalle.inventorywidget.widget.WidgetUpdateHelper
+
 
 class EditProductViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -21,11 +23,14 @@ class EditProductViewModel(application: Application) : AndroidViewModel(applicat
             try {
                 repository.update(product)
                 _updateResult.value = UpdateResult.Success
+                // Actualizar widget después de actualizar
+                WidgetUpdateHelper.updateWidget(getApplication())
             } catch (e: Exception) {
                 _updateResult.value = UpdateResult.Error(e.message ?: "Error desconocido")
             }
         }
     }
+
 
     sealed class UpdateResult {
         object Success : UpdateResult()
