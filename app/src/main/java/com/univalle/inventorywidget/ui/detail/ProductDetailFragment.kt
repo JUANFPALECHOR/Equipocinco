@@ -11,15 +11,13 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.univalle.inventorywidget.R
-import com.univalle.inventorywidget.data.ProductRepository
 import com.univalle.inventorywidget.data.Product
 import com.univalle.inventorywidget.ui.home.HomeFragment
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import android.widget.Toast
 import com.univalle.inventorywidget.ui.editproduct.EditProductFragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+
 
 class ProductDetailFragment : Fragment() {
 
@@ -29,9 +27,12 @@ class ProductDetailFragment : Fragment() {
     private lateinit var tvCantidad: TextView
     private lateinit var tvTotal: TextView
     private lateinit var btnEliminar: Button
+
+    private val viewModel: ProductDetailViewModel by viewModels()
+
     private lateinit var fabEditar: FloatingActionButton
-    private lateinit var repo: ProductRepository
     private var product: Product? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,7 +40,6 @@ class ProductDetailFragment : Fragment() {
     ): View? {
         val vista = inflater.inflate(R.layout.fragment_product_detail, container, false)
 
-        repo = ProductRepository.getInstance(requireContext())
 
         toolbar = vista.findViewById(R.id.toolbarDetalle)
         tvNombre = vista.findViewById(R.id.tvNombreDetalle)
@@ -51,14 +51,22 @@ class ProductDetailFragment : Fragment() {
 
         val codigo = arguments?.getString("codigoProducto")
 
-        product = repo.obtenerProductosDirecto().find { it.codigo == codigo }
-
-        product?.let {
-            tvNombre.text = "Nombre: ${it.nombre}"
-            tvPrecio.text = "Precio unidad: ${it.precio}"
-            tvCantidad.text = "Cantidad: ${it.cantidad}"
-            tvTotal.text = "Total: ${it.precio * it.cantidad}"
+        // Cargar producto desde ViewModel
+        codigo?.let {
+            viewModel.loadProduct(it)
         }
+
+        // Observar el producto
+        viewModel.product.observe(viewLifecycleOwner) { producto ->
+            producto?.let {
+                product = it
+                tvNombre.text = "Nombre: ${it.nombre}"
+                tvPrecio.text = "Precio unidad: ${it.precio}"
+                tvCantidad.text = "Cantidad: ${it.cantidad}"
+                tvTotal.text = "Total: ${it.precio * it.cantidad}"
+            }
+        }
+
 
         toolbar.setNavigationOnClickListener {
             requireActivity().supportFragmentManager.beginTransaction()
@@ -74,18 +82,24 @@ class ProductDetailFragment : Fragment() {
                 .setNegativeButton("No", null)
                 .setPositiveButton("Sí") { _, _ ->
                     product?.let { p ->
-                        CoroutineScope(Dispatchers.IO).launch {
-                            repo.delete(p)
-                            withContext(Dispatchers.Main) {
-                                requireActivity().supportFragmentManager.beginTransaction()
-                                    .replace(R.id.contenedorFragments, HomeFragment())
-                                    .commit()
-                            }
-                        }
+                        viewModel.deleteProduct(p)
                     }
                 }
                 .show()
         }
+
+
+        viewModel.deleteResult.observe(viewLifecycleOwner) { success ->
+            if (success) {
+                Toast.makeText(requireContext(), "Producto eliminado", Toast.LENGTH_SHORT).show()
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.contenedorFragments, HomeFragment())
+                    .commit()
+            } else {
+                Toast.makeText(requireContext(), "Error al eliminar", Toast.LENGTH_SHORT).show()
+            }
+        }
+
 
         fabEditar.setOnClickListener {
             product?.let { producto ->

@@ -11,17 +11,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
+import androidx.fragment.app.viewModels
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textfield.TextInputEditText
 import com.univalle.inventorywidget.R
 import com.univalle.inventorywidget.data.Product
-import com.univalle.inventorywidget.data.ProductRepository
 import com.univalle.inventorywidget.ui.home.HomeFragment
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+
 
 class AddProductFragment : Fragment() {
 
@@ -31,14 +29,16 @@ class AddProductFragment : Fragment() {
     private lateinit var etCantidad: TextInputEditText
     private lateinit var btnGuardar: Button
     private lateinit var toolbar: MaterialToolbar
-    private lateinit var repo: ProductRepository
+
+    private val viewModel: AddProductViewModel by viewModels()
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val vista = inflater.inflate(R.layout.fragment_add_product, container, false)
-        repo = ProductRepository.getInstance(requireContext())
+
 
         etCodigo = vista.findViewById(R.id.etCodigo)
         etNombre = vista.findViewById(R.id.etNombre)
@@ -105,30 +105,30 @@ class AddProductFragment : Fragment() {
                 cantidad = cantidad
             )
 
-            lifecycleScope.launch(Dispatchers.IO) {
-                val insertado = repo.insert(product)
-                withContext(Dispatchers.Main) {
-                    if (insertado) {
-                        Toast.makeText(requireContext(), "Producto guardado", Toast.LENGTH_SHORT).show()
-                        // limpiar campos
-                        etCodigo.text?.clear()
-                        etNombre.text?.clear()
-                        etPrecio.text?.clear()
-                        etCantidad.text?.clear()
-                        // volver al Home
-                        val fragment = HomeFragment()
-                        requireActivity().supportFragmentManager.beginTransaction()
-                            .replace(R.id.contenedorFragments, fragment)
-                            .commit()
-                    } else {
-                        Toast.makeText(requireContext(), "El código ya existe", Toast.LENGTH_SHORT).show()
-                    }
+
+            viewModel.insertProduct(product)
+        }
+
+
+        viewModel.insertResult.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is AddProductViewModel.InsertResult.Success -> {
+                    Toast.makeText(requireContext(), "Producto guardado", Toast.LENGTH_SHORT).show()
+                    limpiarCampos()
+                    irAHome()
+                }
+                is AddProductViewModel.InsertResult.DuplicateCode -> {
+                    Toast.makeText(requireContext(), "El código ya existe", Toast.LENGTH_SHORT).show()
+                }
+                is AddProductViewModel.InsertResult.Error -> {
+                    Toast.makeText(requireContext(), "Error: ${result.message}", Toast.LENGTH_SHORT).show()
                 }
             }
         }
 
         return vista
     }
+
 
     private fun limpiarCampos() {
         etCodigo.text?.clear()

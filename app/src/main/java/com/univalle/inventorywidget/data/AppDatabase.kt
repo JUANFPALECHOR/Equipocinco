@@ -19,8 +19,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "inventory.db"
                 )
-                    .allowMainThreadQueries()    
-                    .fallbackToDestructiveMigration()// solo borra la base cuando cambias el esquema en ambiente de Desarrollo no hay problema, en produccion en mejor migrar manualmente.
+                    .fallbackToDestructiveMigration()
                     .build()
                     .also { INSTANCE = it }
             }
