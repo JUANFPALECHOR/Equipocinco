@@ -10,13 +10,14 @@ import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
 import com.univalle.inventorywidget.R
 import com.univalle.inventorywidget.data.Product
-import com.univalle.inventorywidget.data.ProductRepository
-import kotlinx.coroutines.launch
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+
+
 
 /**
  * Fragment para editar un producto existente
@@ -24,13 +25,16 @@ import kotlinx.coroutines.launch
  */
 class EditProductFragment : Fragment() {
 
-    private lateinit var repo: ProductRepository
+
     private lateinit var tvProductId: TextView
     private lateinit var etNombre: TextInputEditText
     private lateinit var etPrecio: TextInputEditText
     private lateinit var etCantidad: TextInputEditText
     private lateinit var btnEditar: MaterialButton
     private lateinit var btnBack: ImageButton
+
+    private val viewModel: EditProductViewModel by viewModels()
+
 
     private var producto: Product? = null
 
@@ -41,8 +45,7 @@ class EditProductFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_edit_product, container, false)
 
-        // Inicializar repositorio
-        repo = ProductRepository.getInstance(requireContext())
+
 
         // Inicializar views
         tvProductId = view.findViewById(R.id.tvProductId)
@@ -94,41 +97,45 @@ class EditProductFragment : Fragment() {
         etPrecio.addTextChangedListener(watcher)
         etCantidad.addTextChangedListener(watcher)
 
-        // Criterio 4: Acción botón Editar
         btnEditar.setOnClickListener {
-            lifecycleScope.launch {
-                try {
-                    val nuevoProducto = producto!!.copy(
-                        nombre = etNombre.text.toString().trim(),
-                        precio = etPrecio.text.toString().toDouble(),
-                        cantidad = etCantidad.text.toString().toInt()
-                    )
+            try {
+                val nuevoProducto = producto!!.copy(
+                    nombre = etNombre.text.toString().trim(),
+                    precio = etPrecio.text.toString().toDouble(),
+                    cantidad = etCantidad.text.toString().toInt()
+                )
 
-                    repo.update(nuevoProducto)
+                viewModel.updateProduct(nuevoProducto)
 
-                    Toast.makeText(
-                        requireContext(),
-                        "Producto actualizado",
-                        Toast.LENGTH_SHORT
-                    ).show()
+            } catch (e: Exception) {
+                Toast.makeText(
+                    requireContext(),
+                    "Error en los datos: ${e.message}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
 
-                    // Criterio 4: Volver a Home Inventario
-                    requireActivity().onBackPressedDispatcher.onBackPressed()
 
-                } catch (e: Exception) {
-                    Toast.makeText(
-                        requireContext(),
-                        "Error al actualizar: ${e.message}",
-                        Toast.LENGTH_SHORT
-                    ).show()
+        viewModel.updateResult.observe(viewLifecycleOwner) { result ->
+            when (result) {
+                is EditProductViewModel.UpdateResult.Success -> {
+                    Toast.makeText(requireContext(), "Producto actualizado", Toast.LENGTH_SHORT).show()
+                    findNavController().navigateUp()
+                }
+                is EditProductViewModel.UpdateResult.Error -> {
+                    Toast.makeText(requireContext(), "Error: ${result.message}", Toast.LENGTH_SHORT).show()
                 }
             }
         }
 
-        // Criterio 1: Botón atrás vuelve a HU 5.0
+
+
+
         btnBack.setOnClickListener {
-            requireActivity().onBackPressedDispatcher.onBackPressed()
+            findNavController().navigateUp()
         }
+
 
         return view
     }

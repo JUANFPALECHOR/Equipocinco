@@ -10,17 +10,17 @@ interface ProductDao {
     fun getAll(): LiveData<List<Product>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insert(product: Product): Long
+    suspend fun insert(product: Product): Long
 
     @Update
-    fun update(product: Product)
+    suspend fun update(product: Product): Int
 
     @Delete
-    fun delete(product: Product)
+    suspend fun delete(product: Product): Int
 
     @Query("SELECT * FROM products ORDER BY codigo ASC")
-    fun getAllNow(): List<Product>
+    suspend fun getAllNow(): List<Product>
 
     @Query("SELECT COUNT(*) FROM products WHERE codigo = :codigo")
-    fun existeCodigo(codigo: String): Int
+    suspend fun existeCodigo(codigo: String): Int
 }

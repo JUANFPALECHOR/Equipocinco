@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/homeFragment">
+
+    <!-- Pantalla principal: Lista de productos -->
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.univalle.inventorywidget.ui.home.HomeFragment"
+        android:label="Inventario"
+        tools:layout="@layout/fragment_home">
+
+        <action
+            android:id="@+id/action_home_to_addProduct"
+            app:destination="@id/addProductFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+
+        <action
+            android:id="@+id/action_home_to_detail"
+            app:destination="@id/productDetailFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+    </fragment>
+
+    <!-- Pantalla: Agregar producto -->
+    <fragment
+        android:id="@+id/addProductFragment"
+        android:name="com.univalle.inventorywidget.ui.addproduct.AddProductFragment"
+        android:label="Agregar Producto"
+        tools:layout="@layout/fragment_add_product" />
+
+    <!-- Pantalla: Detalle del producto -->
+    <fragment
+        android:id="@+id/productDetailFragment"
+        android:name="com.univalle.inventorywidget.ui.detail.ProductDetailFragment"
+        android:label="Detalle Producto"
+        tools:layout="@layout/fragment_product_detail">
+
+        <argument
+            android:name="codigoProducto"
+            app:argType="string" />
+
+        <action
+            android:id="@+id/action_detail_to_edit"
+            app:destination="@id/editProductFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
+    </fragment>
+
+    <!-- Pantalla: Editar producto -->
+    <fragment
+        android:id="@+id/editProductFragment"
+        android:name="com.univalle.inventorywidget.ui.editproduct.EditProductFragment"
+        android:label="Editar Producto"
+        tools:layout="@layout/fragment_edit_product">
+
+        <argument
+            android:name="codigo"
+            app:argType="string" />
+        <argument
+            android:name="nombre"
+            app:argType="string" />
+        <argument
+            android:name="precio"
+            app:argType="float" />
+        <argument
+            android:name="cantidad"
+            app:argType="integer" />
+    </fragment>
+
+</navigation>

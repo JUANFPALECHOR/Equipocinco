@@ -12,6 +12,8 @@ import com.univalle.inventorywidget.R
 import com.univalle.inventorywidget.ui.adapters.ProductAdapter
 import com.univalle.inventorywidget.ui.login.LoginActivity
 import com.google.android.material.appbar.MaterialToolbar
+import androidx.navigation.fragment.findNavController
+
 import com.univalle.inventorywidget.ui.addproduct.AddProductFragment
 
 class HomeFragment : Fragment() {
@@ -59,12 +61,9 @@ class HomeFragment : Fragment() {
         // 🔘 Navegar a la pantalla de Agregar Producto
         val btnAgregar = vista.findViewById<com.google.android.material.floatingactionbutton.FloatingActionButton>(R.id.btnAgregar)
         btnAgregar.setOnClickListener {
-            val fragment = AddProductFragment()
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.contenedorFragments, fragment)
-                .addToBackStack(null)
-                .commit()
+            findNavController().navigate(R.id.action_home_to_addProduct)
         }
+
 
         return vista
     }

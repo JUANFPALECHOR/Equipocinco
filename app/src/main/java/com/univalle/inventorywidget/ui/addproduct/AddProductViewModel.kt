@@ -1,29 +1,47 @@
 package com.univalle.inventorywidget.ui.addproduct
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.univalle.inventorywidget.data.Product
+import com.univalle.inventorywidget.data.ProductRepository
+import kotlinx.coroutines.launch
+import com.univalle.inventorywidget.widget.WidgetUpdateHelper
 
-class AddProductViewModel : ViewModel() {
 
-    val codigo = MutableLiveData<String>()
-    val nombre = MutableLiveData<String>()
-    val precio = MutableLiveData<String>()
-    val cantidad = MutableLiveData<String>()
+class AddProductViewModel(application: Application) : AndroidViewModel(application) {
 
-    fun camposCompletos(): Boolean {
-        return !codigo.value.isNullOrBlank()
-                && !nombre.value.isNullOrBlank()
-                && !precio.value.isNullOrBlank()
-                && !cantidad.value.isNullOrBlank()
+    private val repository = ProductRepository.getInstance(application.applicationContext)
+
+    // LiveData para comunicar el resultado al Fragment
+    private val _insertResult = MutableLiveData<InsertResult>()
+    val insertResult: LiveData<InsertResult> = _insertResult
+
+    // CORRUTINAS (viewModelScope)
+    fun insertProduct(product: Product) {
+        viewModelScope.launch {
+            try {
+                val exito = repository.insert(product)
+                if (exito) {
+                    _insertResult.value = InsertResult.Success
+                    // Actualizar widget después de insertar
+                    WidgetUpdateHelper.updateWidget(getApplication())
+                } else {
+                    _insertResult.value = InsertResult.DuplicateCode
+                }
+            } catch (e: Exception) {
+                _insertResult.value = InsertResult.Error(e.message ?: "Error desconocido")
+            }
+        }
     }
 
-    fun crearProducto(): Product {
-        return Product(
-            codigo = codigo.value!!,
-            nombre = nombre.value!!,
-            precio = precio.value!!.toDouble(),
-            cantidad = cantidad.value!!.toInt()
-        )
+
+    // Clase sellada para manejar resultados
+    sealed class InsertResult {
+        object Success : InsertResult()
+        object DuplicateCode : InsertResult()
+        data class Error(val message: String) : InsertResult()
     }
 }

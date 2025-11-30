@@ -66,7 +66,7 @@ class LoginActivity : AppCompatActivity() {
                 }
             })
 
-
+        //ventana emergente
         promptInfo = BiometricPrompt.PromptInfo.Builder()
             .setTitle("Autenticación con biometría")
             .setSubtitle("Usa tu huella digital para continuar")
@@ -81,7 +81,7 @@ class LoginActivity : AppCompatActivity() {
             Toast.makeText(this, "El dispositivo no soporta biometría", Toast.LENGTH_LONG).show()
         }
 
-
+        // conecto la animacion de huella
         val huellaView: LottieAnimationView = findViewById(R.id.huellaAnim)
         huellaView.setOnClickListener {
             biometricPrompt.authenticate(promptInfo)
