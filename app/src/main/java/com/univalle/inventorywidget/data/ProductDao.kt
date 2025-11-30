@@ -13,10 +13,10 @@ interface ProductDao {
     suspend fun insert(product: Product): Long
 
     @Update
-    suspend fun update(product: Product)
+    suspend fun update(product: Product): Int
 
     @Delete
-    suspend fun delete(product: Product)
+    suspend fun delete(product: Product): Int
 
     @Query("SELECT * FROM products ORDER BY codigo ASC")
     suspend fun getAllNow(): List<Product>
