@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "738035335758",
+    "project_id": "grupo5-1eda2",
+    "storage_bucket": "grupo5-1eda2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:738035335758:android:4e26cb8686117f2bb0f91f",
+        "android_client_info": {
+          "package_name": "com.univalle.inventorywidget"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "738035335758-sk935a31jnfv81kfjmc1gcepck9m0sjc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDX3jWW7czlO9xWvU1HODHlZtlE3CEZeps"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "738035335758-sk935a31jnfv81kfjmc1gcepck9m0sjc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
