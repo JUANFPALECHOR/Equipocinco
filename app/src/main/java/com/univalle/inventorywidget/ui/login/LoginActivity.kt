@@ -81,6 +81,7 @@ class LoginActivity : AppCompatActivity() {
             realizarLogin()
         }
 
+
         // Botón Registrarse
         tvRegistrarse.setOnClickListener {
             realizarRegistro()
@@ -148,7 +149,7 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener {
                 // Login exitoso - Guardar sesión en SharedPreferences
-                val prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE)
+                val prefs = getSharedPreferences("inventory_prefs", MODE_PRIVATE)
                 prefs.edit().putBoolean("isLoggedIn", true).apply()
 
                 Toast.makeText(this, "Login exitoso", Toast.LENGTH_SHORT).show()

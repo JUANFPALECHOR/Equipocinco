@@ -9,22 +9,19 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 🔐 Verificar sesión ANTES de cargar el UI
-        val prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE)
-        val isLoggedIn = prefs.getBoolean("isLoggedIn", false)
+        // Verificar si hay sesión activa
+        val prefs = getSharedPreferences("inventory_prefs", MODE_PRIVATE)
+        val sesionActiva = prefs.getBoolean("sesionActiva", false)
 
-        if (!isLoggedIn) {
-            // Si no hay sesión, ir directamente a LoginActivity
+        if (!sesionActiva) {
+            // No hay sesión → Ir a LoginActivity
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
             return
         }
 
-        // Solo cargar el UI si hay sesión activa
+        // Si hay sesión, cargar el layout
         setContentView(R.layout.activity_main)
-
-        // Navigation Component maneja todo automáticamente
-        // El NavHostFragment carga el fragmento inicial definido en nav_graph.xml
     }
 }
