@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     id("org.jetbrains.kotlin.kapt")
     id("com.google.gms.google-services")
+    id("com.google.dagger.hilt.android") version "2.48" apply true
 }
 
 android {
@@ -81,6 +82,12 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics:22.1.2")
     implementation("com.google.firebase:firebase-auth:23.1.0")
 
+    // Hilt
+    implementation("com.google.dagger:hilt-android:2.48")
+    kapt("com.google.dagger:hilt-compiler:2.48")
+
+    // Hilt ViewModel
+    implementation("androidx.hilt:hilt-navigation-fragment:1.1.0")
 
 
 

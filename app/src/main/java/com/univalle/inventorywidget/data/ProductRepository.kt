@@ -1,12 +1,13 @@
 package com.univalle.inventorywidget.data
 
-import android.content.Context
 import androidx.lifecycle.LiveData
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class ProductRepository private constructor(private val context: Context) {
-
-    private val productDao = AppDatabase.getInstance(context).productDao()
-
+@Singleton
+class ProductRepository @Inject constructor(
+    private val productDao: ProductDao
+) {
     fun obtenerProductos(): LiveData<List<Product>> = productDao.getAll()
 
     suspend fun insert(product: Product): Boolean {
@@ -25,12 +26,4 @@ class ProductRepository private constructor(private val context: Context) {
     }
 
     suspend fun obtenerProductosDirecto(): List<Product> = productDao.getAllNow()
-
-    companion object {
-        @Volatile private var INSTANCE: ProductRepository? = null
-        fun getInstance(context: Context) =
-            INSTANCE ?: synchronized(this) {
-                INSTANCE ?: ProductRepository(context).also { INSTANCE = it }
-            }
-    }
 }

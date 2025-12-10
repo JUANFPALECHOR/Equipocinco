@@ -13,12 +13,15 @@ import com.univalle.inventorywidget.ui.adapters.ProductAdapter
 import com.univalle.inventorywidget.ui.login.LoginActivity
 import com.google.android.material.appbar.MaterialToolbar
 import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
+import androidx.fragment.app.viewModels
 
 import com.univalle.inventorywidget.ui.addproduct.AddProductFragment
 
+@AndroidEntryPoint  
 class HomeFragment : Fragment() {
 
-    private lateinit var viewModel: HomeViewModel
+    private val viewModel: HomeViewModel by viewModels()
     private lateinit var recyclerView: RecyclerView
     private lateinit var toolbar: MaterialToolbar
 

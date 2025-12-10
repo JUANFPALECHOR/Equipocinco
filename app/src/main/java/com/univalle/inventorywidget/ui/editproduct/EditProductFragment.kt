@@ -16,13 +16,14 @@ import com.univalle.inventorywidget.R
 import com.univalle.inventorywidget.data.Product
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-
+import dagger.hilt.android.AndroidEntryPoint
 
 
 /**
  * Fragment para editar un producto existente
  * HU 6.0: Ventana Editar Producto
  */
+@AndroidEntryPoint
 class EditProductFragment : Fragment() {
 
 

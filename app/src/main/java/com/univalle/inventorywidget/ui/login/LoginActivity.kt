@@ -15,8 +15,9 @@ import com.google.firebase.auth.FirebaseAuth
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import com.univalle.inventorywidget.widget.InventoryWidgetProvider
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var executor: Executor
