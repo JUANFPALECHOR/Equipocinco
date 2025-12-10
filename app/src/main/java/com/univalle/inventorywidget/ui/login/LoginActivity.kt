@@ -150,7 +150,8 @@ class LoginActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 // Login exitoso - Guardar sesión en SharedPreferences
                 val prefs = getSharedPreferences("inventory_prefs", MODE_PRIVATE)
-                prefs.edit().putBoolean("isLoggedIn", true).apply()
+                prefs.edit().putBoolean("sesionActiva", true).apply()
+
 
                 Toast.makeText(this, "Login exitoso", Toast.LENGTH_SHORT).show()
                 navegarDespuesDeLogin()
@@ -176,8 +177,9 @@ class LoginActivity : AppCompatActivity() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener {
                 // Registro exitoso - Guardar sesión en SharedPreferences
-                val prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE)
-                prefs.edit().putBoolean("isLoggedIn", true).apply()
+                val prefs = getSharedPreferences("inventory_prefs", MODE_PRIVATE)
+                prefs.edit().putBoolean("sesionActiva", true).apply()
+
 
                 Toast.makeText(this, "Registro exitoso", Toast.LENGTH_SHORT).show()
                 navegarDespuesDeLogin()
