@@ -2,30 +2,36 @@ package com.univalle.inventorywidget.ui.login
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.InputType
+import android.text.TextWatcher
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.biometric.BiometricManager
-import androidx.biometric.BiometricPrompt
-import androidx.core.content.ContextCompat
-import com.univalle.inventorywidget.R
-import com.univalle.inventorywidget.MainActivity
-import com.airbnb.lottie.LottieAnimationView
-import java.util.concurrent.Executor
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
+import com.univalle.inventorywidget.MainActivity
+import com.univalle.inventorywidget.R
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import com.univalle.inventorywidget.widget.InventoryWidgetProvider
 
-
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var executor: Executor
-    private lateinit var biometricPrompt: BiometricPrompt
-    private lateinit var promptInfo: BiometricPrompt.PromptInfo
-
     private lateinit var auth: FirebaseAuth
-    private var fromWidget: String? = null // "EYE", "MANAGE" o null
+    private lateinit var tilEmail: TextInputLayout
+    private lateinit var etEmail: TextInputEditText
+    private lateinit var tilPassword: TextInputLayout
+    private lateinit var etPassword: TextInputEditText
+    private lateinit var ivTogglePassword: ImageView
+    private lateinit var btnLogin: Button
+    private lateinit var tvRegistrarse: TextView
 
+    private var fromWidget: String? = null
+    private var isPasswordVisible = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,69 +40,153 @@ class LoginActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         fromWidget = intent.getStringExtra("FROM_WIDGET")
 
-
+        // Verificar si ya hay sesión activa
         val currentUser = auth.currentUser
         if (currentUser != null) {
-
             navegarDespuesDeLogin()
             return
         }
 
-        executor = ContextCompat.getMainExecutor(this)
+        // Inicializar vistas
+        tilEmail = findViewById(R.id.tilEmail)
+        etEmail = findViewById(R.id.etEmail)
+        tilPassword = findViewById(R.id.tilPassword)
+        etPassword = findViewById(R.id.etPassword)
+        ivTogglePassword = findViewById(R.id.ivTogglePassword)
+        btnLogin = findViewById(R.id.btnLogin)
+        tvRegistrarse = findViewById(R.id.tvRegistrarse)
 
-        biometricPrompt = BiometricPrompt(this, executor,
-            object : BiometricPrompt.AuthenticationCallback() {
-                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                    super.onAuthenticationSucceeded(result)
-                    Toast.makeText(applicationContext, "Autenticación exitosa ✅", Toast.LENGTH_SHORT).show()
+        // Configurar campo de password (solo números)
+        etPassword.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD
 
-
-                    auth.signInAnonymously()
-                        .addOnSuccessListener {
-                            // Guardar la sesión activa también en SharedPreferences
-                            val prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE)
-                            prefs.edit().putBoolean("isLoggedIn", true).apply()
-
-                            navegarDespuesDeLogin()
-                        }
-                        .addOnFailureListener { e ->
-                            Toast.makeText(applicationContext, "Error en Firebase: ${e.message}", Toast.LENGTH_SHORT).show()
-                        }
-                }
-
-                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                    super.onAuthenticationError(errorCode, errString)
-                    Toast.makeText(applicationContext, "Error: $errString", Toast.LENGTH_SHORT).show()
-                }
-
-                override fun onAuthenticationFailed() {
-                    super.onAuthenticationFailed()
-                    Toast.makeText(applicationContext, "Autenticación fallida ❌", Toast.LENGTH_SHORT).show()
-                }
-            })
-
-        //ventana emergente
-        promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle("Autenticación con biometría")
-            .setSubtitle("Usa tu huella digital para continuar")
-            .setNegativeButtonText("Cancelar")
-            .build()
-
-        val biometricManager = BiometricManager.from(this)
-        val puedeAutenticar = biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK)
-
-        if (puedeAutenticar != BiometricManager.BIOMETRIC_SUCCESS) {
-            Toast.makeText(this, "El dispositivo no soporta biometría", Toast.LENGTH_LONG).show()
+        // TextWatcher para validación en tiempo real
+        val textWatcher = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                validarCampos()
+            }
+            override fun afterTextChanged(s: Editable?) {}
         }
 
-        // conecto la animacion de huella
-        val huellaView: LottieAnimationView = findViewById(R.id.huellaAnim)
-        huellaView.setOnClickListener {
-            biometricPrompt.authenticate(promptInfo)
+        etEmail.addTextChangedListener(textWatcher)
+        etPassword.addTextChangedListener(textWatcher)
+
+        // Toggle password visibility
+        ivTogglePassword.setOnClickListener {
+            togglePasswordVisibility()
+        }
+
+        // Botón Login
+        btnLogin.setOnClickListener {
+            realizarLogin()
+        }
+
+        // Botón Registrarse
+        tvRegistrarse.setOnClickListener {
+            realizarRegistro()
         }
     }
 
+    private fun validarCampos() {
+        val email = etEmail.text.toString().trim()
+        val password = etPassword.text.toString().trim()
 
+        // Validar password (mínimo 6 dígitos)
+        if (password.isNotEmpty() && password.length < 6) {
+            tilPassword.error = "Mínimo 6 dígitos"
+            tilPassword.isErrorEnabled = true
+        } else {
+            tilPassword.error = null
+            tilPassword.isErrorEnabled = false
+        }
+
+        // Habilitar botones si ambos campos están llenos y password válido
+        val camposValidos = email.isNotEmpty() && password.length >= 6
+
+        btnLogin.isEnabled = camposValidos
+        tvRegistrarse.isEnabled = camposValidos
+
+        // Cambiar estilo de los botones según estado
+        if (camposValidos) {
+            btnLogin.alpha = 1.0f
+            tvRegistrarse.setTextColor(getColor(android.R.color.white))
+            tvRegistrarse.setTypeface(null, android.graphics.Typeface.BOLD)
+        } else {
+            btnLogin.alpha = 0.5f
+            tvRegistrarse.setTextColor(getColor(R.color.gray_inactive))
+            tvRegistrarse.setTypeface(null, android.graphics.Typeface.NORMAL)
+        }
+    }
+
+    private fun togglePasswordVisibility() {
+        if (isPasswordVisible) {
+            // Ocultar contraseña
+            etPassword.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD
+            ivTogglePassword.setImageResource(R.drawable.ic_eye_open)
+            isPasswordVisible = false
+        } else {
+            // Mostrar contraseña
+            etPassword.inputType = InputType.TYPE_CLASS_NUMBER
+            ivTogglePassword.setImageResource(R.drawable.ic_eye_closed)
+            isPasswordVisible = true
+        }
+        // Mover cursor al final
+        etPassword.setSelection(etPassword.text?.length ?: 0)
+    }
+
+    private fun realizarLogin() {
+        val email = etEmail.text.toString().trim()
+        val password = etPassword.text.toString().trim()
+
+        if (email.isEmpty() || password.length < 6) {
+            return
+        }
+
+        // Deshabilitar botón mientras se procesa
+        btnLogin.isEnabled = false
+
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnSuccessListener {
+                // Login exitoso - Guardar sesión en SharedPreferences
+                val prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE)
+                prefs.edit().putBoolean("isLoggedIn", true).apply()
+
+                Toast.makeText(this, "Login exitoso", Toast.LENGTH_SHORT).show()
+                navegarDespuesDeLogin()
+            }
+            .addOnFailureListener { e ->
+                // Login fallido
+                Toast.makeText(this, "Login incorrecto", Toast.LENGTH_SHORT).show()
+                btnLogin.isEnabled = true
+            }
+    }
+
+    private fun realizarRegistro() {
+        val email = etEmail.text.toString().trim()
+        val password = etPassword.text.toString().trim()
+
+        if (email.isEmpty() || password.length < 6) {
+            return
+        }
+
+        // Deshabilitar botón mientras se procesa
+        tvRegistrarse.isEnabled = false
+
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnSuccessListener {
+                // Registro exitoso - Guardar sesión en SharedPreferences
+                val prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE)
+                prefs.edit().putBoolean("isLoggedIn", true).apply()
+
+                Toast.makeText(this, "Registro exitoso", Toast.LENGTH_SHORT).show()
+                navegarDespuesDeLogin()
+            }
+            .addOnFailureListener { e ->
+                // Registro fallido (usuario ya existe)
+                Toast.makeText(this, "Error en el registro", Toast.LENGTH_SHORT).show()
+                tvRegistrarse.isEnabled = true
+            }
+    }
 
     private fun navegarDespuesDeLogin() {
         when (fromWidget) {
@@ -127,6 +217,4 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
-
-
 }
