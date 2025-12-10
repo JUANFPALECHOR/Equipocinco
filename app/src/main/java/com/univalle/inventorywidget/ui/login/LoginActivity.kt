@@ -34,10 +34,10 @@ class LoginActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         fromWidget = intent.getStringExtra("FROM_WIDGET")
 
-        // 🔒 Verificador de la sesión con Firebase Auth
+
         val currentUser = auth.currentUser
         if (currentUser != null) {
-            // Si ya hay sesión en Firebase, decidir a dónde ir
+
             navegarDespuesDeLogin()
             return
         }
@@ -50,7 +50,7 @@ class LoginActivity : AppCompatActivity() {
                     super.onAuthenticationSucceeded(result)
                     Toast.makeText(applicationContext, "Autenticación exitosa ✅", Toast.LENGTH_SHORT).show()
 
-                    // Autenticar en Firebase de forma anónima
+
                     auth.signInAnonymously()
                         .addOnSuccessListener {
                             // Guardar la sesión activa también en SharedPreferences
