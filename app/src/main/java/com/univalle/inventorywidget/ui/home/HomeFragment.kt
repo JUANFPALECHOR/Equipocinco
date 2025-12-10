@@ -79,21 +79,4 @@ class HomeFragment : Fragment() {
         requireActivity().finish()
     }
 
-    override fun onResume() {
-        super.onResume()
-        verificarSesion()
-    }
-
-    // 🔒 Verifica si la sesión sigue activa, si no redirige al login
-    private fun verificarSesion() {
-        val prefs = requireActivity()
-            .getSharedPreferences("sesion_usuario", Context.MODE_PRIVATE)
-        val isLogged = prefs.getBoolean("isLoggedIn", false)
-
-        if (!isLogged) {
-            val intent = Intent(requireContext(), LoginActivity::class.java)
-            startActivity(intent)
-            requireActivity().finish()
-        }
-    }
 }

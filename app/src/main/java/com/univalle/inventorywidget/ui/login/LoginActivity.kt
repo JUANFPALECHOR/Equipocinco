@@ -11,6 +11,11 @@ import com.univalle.inventorywidget.R
 import com.univalle.inventorywidget.MainActivity
 import com.airbnb.lottie.LottieAnimationView
 import java.util.concurrent.Executor
+import com.google.firebase.auth.FirebaseAuth
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import com.univalle.inventorywidget.widget.InventoryWidgetProvider
+
 
 class LoginActivity : AppCompatActivity() {
 
@@ -18,26 +23,26 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var biometricPrompt: BiometricPrompt
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
 
+    private lateinit var auth: FirebaseAuth
+    private var fromWidget: String? = null // "EYE", "MANAGE" o null
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        // 🔒 Verificador de la sesion
-        val prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE)
-        val isLoggedIn = prefs.getBoolean("isLoggedIn", false)
+        auth = FirebaseAuth.getInstance()
+        fromWidget = intent.getStringExtra("FROM_WIDGET")
 
-        if (isLoggedIn) {
-            // Si ya hay sesión, ir directo al Home sin pedir huella
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
+
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+
+            navegarDespuesDeLogin()
             return
         }
 
-        setContentView(R.layout.activity_login)
-
         executor = ContextCompat.getMainExecutor(this)
-
 
         biometricPrompt = BiometricPrompt(this, executor,
             object : BiometricPrompt.AuthenticationCallback() {
@@ -45,14 +50,18 @@ class LoginActivity : AppCompatActivity() {
                     super.onAuthenticationSucceeded(result)
                     Toast.makeText(applicationContext, "Autenticación exitosa ✅", Toast.LENGTH_SHORT).show()
 
-                    // Guardar la sesión activa
-                    val prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE)
-                    prefs.edit().putBoolean("isLoggedIn", true).apply()
 
+                    auth.signInAnonymously()
+                        .addOnSuccessListener {
+                            // Guardar la sesión activa también en SharedPreferences
+                            val prefs = getSharedPreferences("sesion_usuario", MODE_PRIVATE)
+                            prefs.edit().putBoolean("isLoggedIn", true).apply()
 
-                    val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                    startActivity(intent)
-                    finish()
+                            navegarDespuesDeLogin()
+                        }
+                        .addOnFailureListener { e ->
+                            Toast.makeText(applicationContext, "Error en Firebase: ${e.message}", Toast.LENGTH_SHORT).show()
+                        }
                 }
 
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
@@ -73,7 +82,6 @@ class LoginActivity : AppCompatActivity() {
             .setNegativeButtonText("Cancelar")
             .build()
 
-
         val biometricManager = BiometricManager.from(this)
         val puedeAutenticar = biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK)
 
@@ -87,4 +95,38 @@ class LoginActivity : AppCompatActivity() {
             biometricPrompt.authenticate(promptInfo)
         }
     }
+
+
+
+    private fun navegarDespuesDeLogin() {
+        when (fromWidget) {
+            "EYE" -> {
+                // Vino del ícono del ojo → Actualizar widget y cerrar
+                val appWidgetManager = AppWidgetManager.getInstance(this)
+                val ids = appWidgetManager.getAppWidgetIds(
+                    ComponentName(this, InventoryWidgetProvider::class.java)
+                )
+                val intent = Intent(this, InventoryWidgetProvider::class.java).apply {
+                    action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+                    putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+                }
+                sendBroadcast(intent)
+                finish()
+            }
+            "MANAGE" -> {
+                // Vino del botón Gestionar → Ir a MainActivity
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+            else -> {
+                // Apertura normal → Ir a MainActivity
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+        }
+    }
+
+
 }
