@@ -10,7 +10,7 @@ import android.widget.RemoteViews
 import com.univalle.inventorywidget.R
 import java.text.NumberFormat
 import java.util.*
-import com.google.firebase.auth.FirebaseAuth // presnta aun el error
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.runBlocking
 
 
@@ -32,31 +32,28 @@ class InventoryWidgetProvider : AppWidgetProvider() {
 
         val views = RemoteViews(context.packageName, R.layout.widget_inventory)
 
-        // Obtener productos desde Room (sin LiveData)
-        val repository = com.univalle.inventorywidget.data.ProductRepository.getInstance(context)
-        val productos = runBlocking { repository.obtenerProductosDirecto() }
 
-
-        // Calcular el saldo total
-        val total = productos.sumOf { it.precio * it.cantidad }
+        val totalCacheado = prefs.getFloat("saldo_total", 0f).toDouble()
 
         // Formatear con separadores y dos decimales
         val formato = NumberFormat.getNumberInstance(Locale("es", "CO"))
         formato.minimumFractionDigits = 2
         formato.maximumFractionDigits = 2
 
-        val saldoTexto = if (mostrarSaldo) {
-            "$" + formato.format(total)
+        val saldoTexto = if (mostrarSaldo && isUserLoggedIn()) {
+            "$" + formato.format(totalCacheado)
         } else {
             "$****"
         }
 
 
 
+
         views.setTextViewText(R.id.tv_saldo, saldoTexto)
         views.setImageViewResource(
             R.id.iv_ojo,
-            if (mostrarSaldo) R.drawable.ic_eye_open else R.drawable.ic_eye_closed
+            if (mostrarSaldo && isUserLoggedIn()) R.drawable.ic_eye_open else R.drawable.ic_eye_closed
+
         )
 
         // Acción del ojo
