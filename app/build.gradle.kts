@@ -62,8 +62,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("com.airbnb.android:lottie:6.1.0")
-    implementation("androidx.biometric:biometric:1.2.0-alpha05")
     implementation("androidx.coordinatorlayout:coordinatorlayout:1.2.0")
     implementation("com.google.android.material:material:1.11.0")
 
