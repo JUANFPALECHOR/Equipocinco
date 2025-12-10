@@ -28,10 +28,11 @@ class LoginActivity : AppCompatActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        auth = FirebaseAuth.getInstance()
-        fromWidget = intent.getStringExtra("FROM_WIDGET")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        auth = FirebaseAuth.getInstance()
+        fromWidget = intent.getStringExtra("FROM_WIDGET")
 
         // 🔒 Verificador de la sesión con Firebase Auth
         val currentUser = auth.currentUser
@@ -41,10 +42,7 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-        setContentView(R.layout.activity_login)
-
         executor = ContextCompat.getMainExecutor(this)
-
 
         biometricPrompt = BiometricPrompt(this, executor,
             object : BiometricPrompt.AuthenticationCallback() {
@@ -66,7 +64,6 @@ class LoginActivity : AppCompatActivity() {
                         }
                 }
 
-
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                     super.onAuthenticationError(errorCode, errString)
                     Toast.makeText(applicationContext, "Error: $errString", Toast.LENGTH_SHORT).show()
@@ -85,7 +82,6 @@ class LoginActivity : AppCompatActivity() {
             .setNegativeButtonText("Cancelar")
             .build()
 
-
         val biometricManager = BiometricManager.from(this)
         val puedeAutenticar = biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK)
 
@@ -99,6 +95,8 @@ class LoginActivity : AppCompatActivity() {
             biometricPrompt.authenticate(promptInfo)
         }
     }
+
+
 
     private fun navegarDespuesDeLogin() {
         when (fromWidget) {
