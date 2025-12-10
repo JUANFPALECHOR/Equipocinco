@@ -10,7 +10,7 @@ import android.widget.RemoteViews
 import com.univalle.inventorywidget.R
 import java.text.NumberFormat
 import java.util.*
-import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuth // presnta aun el error
 import kotlinx.coroutines.runBlocking
 
 
