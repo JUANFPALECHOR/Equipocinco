@@ -15,8 +15,9 @@ import com.google.android.material.appbar.MaterialToolbar
 import androidx.navigation.fragment.findNavController
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.fragment.app.viewModels
-
 import com.univalle.inventorywidget.ui.addproduct.AddProductFragment
+import android.content.ComponentName
+import android.appwidget.AppWidgetManager
 
 @AndroidEntryPoint  
 class HomeFragment : Fragment() {
@@ -70,20 +71,34 @@ class HomeFragment : Fragment() {
 
     // 🔐 Función para cerrar sesión
     private fun cerrarSesion() {
-
+        // 1. Cerrar sesión de Firebase
         com.google.firebase.auth.FirebaseAuth.getInstance().signOut()
 
-
+        // 2. Limpiar SharedPreferences
         val prefs = requireActivity()
             .getSharedPreferences("inventory_prefs", Context.MODE_PRIVATE)
-        prefs.edit().putBoolean("sesionActiva", false).apply()
+        prefs.edit()
+            .putBoolean("sesionActiva", false)
+            .putBoolean("mostrarSaldo", false)  // ← Ocultar saldo en widget
+            .putFloat("saldo_total", 0f)        // ← Limpiar saldo
+            .apply()
 
+        // 3. Actualizar widget inmediatamente
+        val intent = Intent(requireContext(), com.univalle.inventorywidget.widget.InventoryWidgetProvider::class.java)
+        intent.action = android.appwidget.AppWidgetManager.ACTION_APPWIDGET_UPDATE
+        val ids = android.appwidget.AppWidgetManager.getInstance(requireContext())
+            .getAppWidgetIds(android.content.ComponentName(
+                requireContext(),
+                com.univalle.inventorywidget.widget.InventoryWidgetProvider::class.java
+            ))
+        intent.putExtra(android.appwidget.AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+        requireContext().sendBroadcast(intent)
 
-        val intent = Intent(requireContext(), LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
+        // 4. Redirigir a LoginActivity
+        val loginIntent = Intent(requireContext(), com.univalle.inventorywidget.ui.login.LoginActivity::class.java)
+        loginIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(loginIntent)
         requireActivity().finish()
     }
-
 
 }
