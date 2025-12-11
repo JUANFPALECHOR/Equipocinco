@@ -70,13 +70,20 @@ class HomeFragment : Fragment() {
 
     // 🔐 Función para cerrar sesión
     private fun cerrarSesion() {
+
+        com.google.firebase.auth.FirebaseAuth.getInstance().signOut()
+
+
         val prefs = requireActivity()
-            .getSharedPreferences("sesion_usuario", Context.MODE_PRIVATE)
-        prefs.edit().putBoolean("isLoggedIn", false).apply()
+            .getSharedPreferences("inventory_prefs", Context.MODE_PRIVATE)
+        prefs.edit().putBoolean("sesionActiva", false).apply()
+
 
         val intent = Intent(requireContext(), LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         requireActivity().finish()
     }
+
 
 }

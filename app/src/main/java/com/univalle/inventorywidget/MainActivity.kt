@@ -11,7 +11,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Verificar si hay sesión activa en Firebase O en SharedPreferences
         val prefs = getSharedPreferences("inventory_prefs", MODE_PRIVATE)
         val sesionActiva = prefs.getBoolean("sesionActiva", false) ||
                 com.google.firebase.auth.FirebaseAuth.getInstance().currentUser != null
@@ -25,7 +24,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        // Si hay sesión, cargar el layout
+
         setContentView(R.layout.activity_main)
     }
 }
