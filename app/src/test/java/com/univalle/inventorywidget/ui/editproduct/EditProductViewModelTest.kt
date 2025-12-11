@@ -46,33 +46,31 @@ class EditProductViewModelTest {
     }
 
     @Test
-    fun updateProduct con exito retorna Success() = runTest {
-        // Given - Dado un producto válido
+    fun updateProduct_Success_ReturnsSuccess() = runTest {
+        // Given
         val product = Product("1234", "Test Actualizado", 15000.0, 10)
 
-        // When - Cuando se actualiza el producto
+        // When
         viewModel.updateProduct(product)
 
-        // Then - Entonces el resultado debe ser Success
+        // Then
         val result = viewModel.updateResult.value
         assertTrue(result is EditProductViewModel.UpdateResult.Success)
         verify(repository).update(product)
     }
 
     @Test
-    fun updateProduct con error retorna Error() = runTest {
-        // Given - Dado que el repository lanza una excepción
+    fun updateProduct_Error_ReturnsError() = runTest {
+        // Given
         val product = Product("1234", "Test", 10000.0, 5)
-        doThrow(RuntimeException("Error de actualización"))
-            .when(repository).update(any())
+        doThrow(RuntimeException("Error de actualizacion")).`when`(repository).update(any())
 
-        // When - Cuando se intenta actualizar
+        // When
         viewModel.updateProduct(product)
 
-        // Then - Entonces el resultado debe ser Error
+        // Then
         val result = viewModel.updateResult.value
         assertTrue(result is EditProductViewModel.UpdateResult.Error)
-        assertEquals("Error de actualización", (result as EditProductViewModel.UpdateResult.Error).message)
+        assertEquals("Error de actualizacion", (result as EditProductViewModel.UpdateResult.Error).message)
     }
 }
-
