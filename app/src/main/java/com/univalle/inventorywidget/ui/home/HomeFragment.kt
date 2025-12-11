@@ -51,10 +51,7 @@ class HomeFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
 
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
-        ).get(HomeViewModel::class.java)
+
 
         // Observar los productos en vivo
         viewModel.productos.observe(viewLifecycleOwner) { lista ->
