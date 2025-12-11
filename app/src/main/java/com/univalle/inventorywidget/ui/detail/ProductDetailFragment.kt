@@ -19,9 +19,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.core.os.bundleOf
+import dagger.hilt.android.AndroidEntryPoint
 
-
-
+@AndroidEntryPoint
 class ProductDetailFragment : Fragment() {
 
     private lateinit var toolbar: MaterialToolbar

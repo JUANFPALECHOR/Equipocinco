@@ -1,19 +1,19 @@
 package com.univalle.inventorywidget.ui.detail
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.univalle.inventorywidget.data.Product
 import com.univalle.inventorywidget.data.ProductRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import com.univalle.inventorywidget.widget.WidgetUpdateHelper
+import javax.inject.Inject
 
-
-class ProductDetailViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val repository = ProductRepository.getInstance(application.applicationContext)
+@HiltViewModel
+class ProductDetailViewModel @Inject constructor(
+    private val repository: ProductRepository
+) : ViewModel() {
 
     private val _product = MutableLiveData<Product?>()
     val product: LiveData<Product?> = _product
@@ -33,12 +33,9 @@ class ProductDetailViewModel(application: Application) : AndroidViewModel(applic
             try {
                 repository.delete(product)
                 _deleteResult.value = true
-                // Actualizar widget después de eliminar
-                WidgetUpdateHelper.updateWidget(getApplication())
             } catch (e: Exception) {
                 _deleteResult.value = false
             }
         }
     }
-
 }

@@ -13,12 +13,16 @@ import com.univalle.inventorywidget.ui.adapters.ProductAdapter
 import com.univalle.inventorywidget.ui.login.LoginActivity
 import com.google.android.material.appbar.MaterialToolbar
 import androidx.navigation.fragment.findNavController
-
+import dagger.hilt.android.AndroidEntryPoint
+import androidx.fragment.app.viewModels
 import com.univalle.inventorywidget.ui.addproduct.AddProductFragment
+import android.content.ComponentName
+import android.appwidget.AppWidgetManager
 
+@AndroidEntryPoint  
 class HomeFragment : Fragment() {
 
-    private lateinit var viewModel: HomeViewModel
+    private val viewModel: HomeViewModel by viewModels()
     private lateinit var recyclerView: RecyclerView
     private lateinit var toolbar: MaterialToolbar
 
@@ -48,10 +52,7 @@ class HomeFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
 
-        viewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
-        ).get(HomeViewModel::class.java)
+
 
         // Observar los productos en vivo
         viewModel.productos.observe(viewLifecycleOwner) { lista ->
@@ -70,12 +71,33 @@ class HomeFragment : Fragment() {
 
     // 🔐 Función para cerrar sesión
     private fun cerrarSesion() {
-        val prefs = requireActivity()
-            .getSharedPreferences("sesion_usuario", Context.MODE_PRIVATE)
-        prefs.edit().putBoolean("isLoggedIn", false).apply()
+        // 1. Cerrar sesión de Firebase
+        com.google.firebase.auth.FirebaseAuth.getInstance().signOut()
 
-        val intent = Intent(requireContext(), LoginActivity::class.java)
-        startActivity(intent)
+        // 2. Limpiar SharedPreferences
+        val prefs = requireActivity()
+            .getSharedPreferences("inventory_prefs", Context.MODE_PRIVATE)
+        prefs.edit()
+            .putBoolean("sesionActiva", false)
+            .putBoolean("mostrarSaldo", false)  // ← Ocultar saldo en widget
+            .putFloat("saldo_total", 0f)        // ← Limpiar saldo
+            .apply()
+
+        // 3. Actualizar widget inmediatamente
+        val intent = Intent(requireContext(), com.univalle.inventorywidget.widget.InventoryWidgetProvider::class.java)
+        intent.action = android.appwidget.AppWidgetManager.ACTION_APPWIDGET_UPDATE
+        val ids = android.appwidget.AppWidgetManager.getInstance(requireContext())
+            .getAppWidgetIds(android.content.ComponentName(
+                requireContext(),
+                com.univalle.inventorywidget.widget.InventoryWidgetProvider::class.java
+            ))
+        intent.putExtra(android.appwidget.AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+        requireContext().sendBroadcast(intent)
+
+        // 4. Redirigir a LoginActivity
+        val loginIntent = Intent(requireContext(), com.univalle.inventorywidget.ui.login.LoginActivity::class.java)
+        loginIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(loginIntent)
         requireActivity().finish()
     }
 

@@ -21,10 +21,13 @@
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
         android:hint="Código producto"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         app:boxStrokeColor="@color/white"
+        app:boxStrokeWidth="1dp"
         app:hintTextColor="@color/white"
+        android:textColorHint="@color/white"
         app:hintTextAppearance="@style/TextInputHintVisible">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -40,10 +43,13 @@
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:hint="Nombre artículo"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         app:boxStrokeColor="@color/white"
+        app:boxStrokeWidth="1dp"
         app:hintTextColor="@color/white"
+        android:textColorHint="@color/white"
         app:hintTextAppearance="@style/TextInputHintVisible">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -52,18 +58,21 @@
             android:layout_height="wrap_content"
             android:inputType="textCapWords"
             android:maxLength="40"
-            android:textAppearance="@style/TextInputEditTextStyle" />
+            android:textColor="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Campo Precio -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:hint="Precio"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         app:boxStrokeColor="@color/white"
+        app:boxStrokeWidth="1dp"
         app:hintTextColor="@color/white"
-        android:textAppearance="@style/TextInputEditTextStyle">
+        android:textColorHint="@color/white"
+        app:hintTextAppearance="@style/TextInputHintVisible">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etPrecio"
@@ -71,18 +80,21 @@
             android:layout_height="wrap_content"
             android:inputType="numberDecimal"
             android:maxLength="20"
-            android:textAppearance="@style/TextInputEditTextStyle" />
+            android:textColor="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Campo Cantidad -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:hint="Cantidad"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         app:boxStrokeColor="@color/white"
+        app:boxStrokeWidth="1dp"
         app:hintTextColor="@color/white"
-        android:textAppearance="@style/TextInputEditTextStyle">
+        android:textColorHint="@color/white"
+        app:hintTextAppearance="@style/TextInputHintVisible">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etCantidad"
@@ -90,7 +102,7 @@
             android:layout_height="wrap_content"
             android:inputType="number"
             android:maxLength="4"
-            android:textAppearance="@style/TextInputEditTextStyle" />
+            android:textColor="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Botón Guardar -->
@@ -98,10 +110,9 @@
         android:id="@+id/btnGuardar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:text="Guardar"
         android:backgroundTint="@color/naranja_principal"
-        android:background="@drawable/rounded_button"
         android:textColor="@android:color/white"
         android:enabled="false"
         android:fontFamily="sans-serif-medium"

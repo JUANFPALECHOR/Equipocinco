@@ -92,16 +92,13 @@ class InventoryWidgetProvider : AppWidgetProvider() {
 
         when (intent.action) {
             "com.univalle.inventorywidget.TOGGLE_SALDO" -> {
-                // Validar si el usuario está logueado
                 if (!isUserLoggedIn()) {
-                    // Si NO está logueado, redirigir a LoginActivity
                     val loginIntent = Intent(context, com.univalle.inventorywidget.ui.login.LoginActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK
                         putExtra("FROM_WIDGET", "EYE")
                     }
                     context.startActivity(loginIntent)
                 } else {
-                    // Si SÍ está logueado, hacer toggle del saldo
                     val prefs = context.getSharedPreferences("inventory_prefs", Context.MODE_PRIVATE)
                     val actual = prefs.getBoolean("mostrarSaldo", false)
                     prefs.edit().putBoolean("mostrarSaldo", !actual).apply()
@@ -115,16 +112,15 @@ class InventoryWidgetProvider : AppWidgetProvider() {
             }
 
             "com.univalle.inventorywidget.GESTIONAR_INVENTARIO" -> {
-                // Validar si el usuario está logueado
+
                 if (!isUserLoggedIn()) {
-                    // Si NO está logueado, redirigir a LoginActivity
                     val loginIntent = Intent(context, com.univalle.inventorywidget.ui.login.LoginActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK
                         putExtra("FROM_WIDGET", "MANAGE")
                     }
                     context.startActivity(loginIntent)
                 } else {
-                    // Si SÍ está logueado, ir directo a MainActivity
+
                     val mainIntent = Intent(context, com.univalle.inventorywidget.MainActivity::class.java).apply {
                         flags = Intent.FLAG_ACTIVITY_NEW_TASK
                     }

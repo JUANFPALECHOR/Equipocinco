@@ -19,9 +19,9 @@ import com.google.android.material.textfield.TextInputEditText
 import com.univalle.inventorywidget.R
 import com.univalle.inventorywidget.data.Product
 import androidx.navigation.fragment.findNavController
+import dagger.hilt.android.AndroidEntryPoint
 
-
-
+@AndroidEntryPoint
 class AddProductFragment : Fragment() {
 
     private lateinit var etCodigo: TextInputEditText

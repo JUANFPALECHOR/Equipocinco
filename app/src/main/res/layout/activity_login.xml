@@ -1,49 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#2C2C2C">
+    android:background="@android:color/black"
+    android:fillViewport="true">
 
-    <!-- Imagen decorativa (arriba derecha) -->
-    <ImageView
-        android:id="@+id/logoInventario"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:src="@drawable/ic_inventory_logo"
-        android:contentDescription="@string/inventory_logo" />
-
-
-    <!-- Título “Inventory” -->
-    <TextView
-        android:id="@+id/tv_title"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Inventory"
-        android:textColor="#E7522E"
-        android:textStyle="bold"
-        android:textSize="60sp"
+        android:padding="24dp">
 
-        android:fontFamily="@font/fredoka_bold"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true" />
+        <!-- Logo de la app (parte superior) -->
+        <ImageView
+            android:id="@+id/ivLogo"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="32dp"
+            android:src="@drawable/ic_inventory_logo"
+            android:contentDescription="@string/inventory_logo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Animación Lottie (huella digital) -->
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/huellaAnim"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="40dp"
-        app:lottie_rawRes="@raw/huella"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true" />
+        <!-- Campo Email -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilEmail"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:hint="Email"
+            android:textColorHint="@android:color/white"
+            app:boxStrokeColor="@android:color/white"
+            app:boxStrokeWidth="2dp"
+            app:hintTextColor="@android:color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ivLogo"
+            app:layout_constraintWidth_max="400dp">
 
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:maxLength="40"
+                android:textColor="@android:color/white"
+                android:textColorHint="@android:color/white" />
+        </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Campo Password -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilPassword"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="Password"
+            android:textColorHint="@android:color/white"
+            app:boxStrokeColor="@android:color/white"
+            app:boxStrokeWidth="2dp"
+            app:errorEnabled="true"
+            app:errorTextColor="@android:color/holo_red_light"
+            app:hintTextColor="@android:color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tilEmail"
+            app:layout_constraintWidth_max="400dp">
 
-</RelativeLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberPassword"
+                android:maxLength="10"
+                android:textColor="@android:color/white"
+                android:textColorHint="@android:color/white" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Ícono de ojo para toggle password -->
+        <ImageView
+            android:id="@+id/ivTogglePassword"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_eye_open"
+            android:contentDescription="Toggle password visibility"
+            app:layout_constraintBottom_toBottomOf="@id/tilPassword"
+            app:layout_constraintEnd_toEndOf="@id/tilPassword"
+            app:layout_constraintTop_toTopOf="@id/tilPassword"
+            app:tint="@android:color/white" />
+
+        <!-- Botón Login -->
+        <Button
+            android:id="@+id/btnLogin"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="32dp"
+            android:backgroundTint="@color/naranja_principal"
+            android:enabled="false"
+            android:text="Login"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            app:cornerRadius="28dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tilPassword"
+            app:layout_constraintWidth_max="400dp" />
+
+        <!-- Texto/Botón Registrarse -->
+        <TextView
+            android:id="@+id/tvRegistrarse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:enabled="false"
+            android:text="Registrarse"
+            android:textColor="@color/gray_inactive"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btnLogin" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
